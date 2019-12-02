@@ -39,5 +39,19 @@
     &:nth-child(even) {
       background-color: #f2f2f2;
     }
+
+    &:hover {
+      cursor: pointer;
+
+      td {
+        background: rgba(0,0,0,0.1);
+      }
+    }
+
+    &.active {
+      td {
+        background: rgba(0,0,0,0.25);
+      }
+    }
   }
 }

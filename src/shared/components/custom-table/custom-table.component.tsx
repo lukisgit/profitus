@@ -10,7 +10,9 @@ interface IComponent {
   attributes: string[];
   filterColumnIndex?: number;
   filterColumnType?: 'asc' | 'desc';
+  selectedId: number | undefined;
   onFilter: (index: number) => void;
+  onSelect: (data: any) => void;
 }
 
 export const CustomTableComponent: React.FC<IComponent> = (props: IComponent) => {
@@ -38,7 +40,7 @@ export const CustomTableComponent: React.FC<IComponent> = (props: IComponent) =>
         <tbody>
         {
           props.data.map((item: any) => (
-            <tr key={item.id}>
+            <tr className={item.id === props.selectedId ? 'active' : ''} key={item.id} onClick={() => props.onSelect(item)}>
               {
                 props.attributes.map((attribute: string, index) => (<td key={index}>{item[attribute]}</td>))
               }

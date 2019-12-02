@@ -5,27 +5,37 @@ import {Dispatch} from "redux";
 import {orderBy} from "lodash";
 import {getContent} from "actions/contentActions";
 import {ACTIONS, IStore} from "store";
+import ReactPaginate from 'react-paginate';
 import {CustomTableComponent} from 'shared/components/custom-table/custom-table.component';
 import './public.component.scss';
-import ReactPaginate from 'react-paginate';
+
+interface IComponentState {
+  isPagination: boolean;
+  currentPage: number;
+  pageCount: number;
+  pageContent: any[],
+  selectedData: any
+}
 
 interface IActionCreators {
   getContent: (url: string) => void;
   filterContent: (index: number) => void;
+  selectContent: (index: number) => void;
 }
 
-const API = 'https://jsonplaceholder.typicode.com/comments';
-const TABLE_LABELS = ["ID", "Name", "Email", "Comment"];
-const TABLE_ATTRIBUTES = ["id", "name", "email", "body"];
-const MAX_ITEMS_PER_PAGE = 5;
+const API = 'https://jsonplaceholder.typicode.com/photos';
+const TABLE_LABELS = ["ID", "Title", "Url", "Thumbnail Url"];
+const TABLE_ATTRIBUTES = ["id", "title", "url", "thumbnailUrl"];
+const MAX_ITEMS_PER_PAGE = 10;
 
 class PublicComponent extends React.Component<IActionCreators & Partial<IStore>> {
 
-  state = {
+  state: IComponentState = {
     isPagination: true,
     currentPage: 0,
     pageCount: 0,
-    pageContent: []
+    pageContent: [],
+    selectedData: null
   };
 
   render(){
@@ -36,13 +46,25 @@ class PublicComponent extends React.Component<IActionCreators & Partial<IStore>>
             <input id="isPagination" type="checkbox" defaultChecked={this.state.isPagination} onChange={(event) => this.setState({ isPagination: !this.state.isPagination })}/>
             <label htmlFor="isPagination">pagination</label>
         </div>
+          {
+            !!this.state.selectedData && (
+                  <table className="selected-data-table">
+                    <tbody>
+                      <tr>
+                          { TABLE_ATTRIBUTES.map((attr: string, index: number) => <td key={index}>{ this.state.selectedData[attr] }</td>)}
+                      </tr>
+                    </tbody>
+                  </table>)
+          }
         { (!!this.props.data && !this.props.fetching) ? (<CustomTableComponent
-          onFilter={this.filterStoreData}
+          onFilter={(index: number) => this.props.filterContent(index)}
+          onSelect={(data: any) => this.handleSelect(data)}
           labels={TABLE_LABELS}
           attributes={TABLE_ATTRIBUTES}
           length={this.props.data.length}
           filterColumnType={this.props.filterColumnType}
           filterColumnIndex={this.props.filterColumnIndex}
+          selectedId={this.props.selectedId}
           data={!this.state.isPagination ? this.props.data : this.state.pageContent}/>) : (<div>loading...</div>) }
           <ReactPaginate
               previousLabel={"←"}
@@ -91,8 +113,11 @@ class PublicComponent extends React.Component<IActionCreators & Partial<IStore>>
     }
   }
 
-  filterStoreData = (index: number) => {
-    this.props.filterContent(index);
+  handleSelect = (data: any) => {
+    this.setState({
+       selectedData: { ...data }
+    });
+    this.props.selectContent(data.id);
   };
 
   handlePageClick = (data: any) => {
@@ -122,14 +147,16 @@ function mapStateToProps (state: IStore): Partial<IStore> {
     data: getFilteredData(state),
     fetching: state.fetching,
     filterColumnType: state.filterColumnType,
-    filterColumnIndex: state.filterColumnIndex
+    filterColumnIndex: state.filterColumnIndex,
+    selectedId: state.selectedId
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch): IActionCreators {
   return {
     getContent: async (url: string) => await getContent(dispatch, url),
-    filterContent: (index: number) => dispatch({type: ACTIONS.FILTER_DATA, payload: { index }})
+    filterContent: (index: number) => dispatch({ type: ACTIONS.FILTER_DATA, payload: { index } }),
+    selectContent: (index: number) => dispatch({ type: ACTIONS.SELECT_ROW, payload: { index } }),
   }
 }
 

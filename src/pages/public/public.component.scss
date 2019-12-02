@@ -1,4 +1,4 @@
-.header {
+.header, table {
   display: block;
   width: 100%;
   max-width: 800px;
@@ -6,6 +6,25 @@
 
   label {
     margin-left: 5px;
+  }
+}
+
+table.selected-data-table {
+  border-spacing: 0px;
+
+  td {
+    padding: 5px;
+    background: rgba(0,0,0,0.2);
+
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
   }
 }
 

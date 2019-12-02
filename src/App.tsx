@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 import PublicComponent from "pages/public/public.component"
-// import  CustomTableComponent from "./shared/components/custom-table/custom-table.component";
 
 const App: React.FC = () => {
   return (
