@@ -13,23 +13,21 @@ interface IComponent {
   onFilter: (index: number) => void;
 }
 
-export class CustomTableComponent extends React.Component<IComponent> {
-
-  render() {
+export const CustomTableComponent: React.FC<IComponent> = (props: IComponent) => {
     return (
     <React.Fragment>
-      {this.props.labels.length === this.props.attributes.length && <table className="table">
+      {props.labels.length === props.attributes.length && <table className="table">
         <thead>
         <tr>
           {
-            this.props.labels.map((label: string, index: number) => (
+            props.labels.map((label: string, index: number) => (
               <th
-                key={index} onClick={() => this.props.onFilter(index)}>
+                key={index} onClick={() => props.onFilter(index)}>
                 {label}
                 {
-                  index === this.props.filterColumnIndex && (
+                  index === props.filterColumnIndex && (
                   <span>
-                    {this.props.filterColumnType === 'asc' ? <FontAwesomeIcon icon={faArrowUp}/> : <FontAwesomeIcon icon={faArrowDown}/>}
+                    {props.filterColumnType === 'asc' ? <FontAwesomeIcon icon={faArrowUp}/> : <FontAwesomeIcon icon={faArrowDown}/>}
                   </span>
                 )
                 }
@@ -39,10 +37,10 @@ export class CustomTableComponent extends React.Component<IComponent> {
         </thead>
         <tbody>
         {
-          this.props.data.map((item: any) => (
+          props.data.map((item: any) => (
             <tr key={item.id}>
               {
-                this.props.attributes.map((attribute: string, index) => (<td key={index}>{item[attribute]}</td>))
+                props.attributes.map((attribute: string, index) => (<td key={index}>{item[attribute]}</td>))
               }
             </tr>
           ))
@@ -51,6 +49,4 @@ export class CustomTableComponent extends React.Component<IComponent> {
       </table>}
     </React.Fragment>
     );
-  }
-
-}
+};
